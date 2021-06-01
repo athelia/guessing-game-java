@@ -16,26 +16,71 @@ public class Game {
         System.out.print("> ");
         String name = input.nextLine();
         System.out.println("Nice to meet you, " + name + "!");
+        System.out.println("Would you like to set a range? Y / N:");
+        System.out.print("> ");
+        String setRange = input.nextLine();
 
-        Random rand = new Random();
-        int target = rand.nextInt(100);
         int attempts = 0;
         String again;
+        int min, max;
 
-        System.out.println("Please guess a number between 1 and 100 (hint: it's " + target +")");
+        while (!setRange.equals("Y") & !setRange.equals("N")) {
+            System.out.println("Please type Y or N!");
+            System.out.print("> ");
+            setRange = input.nextLine();
+        }
+        
+        // setting up the target number
+        while (true) {
+            if (setRange.equals("Y")){
+                System.out.println("Choose the minimum: ");
+                System.out.print("> ");
+                try {
+                    min = input.nextInt();
+                } catch (InputMismatchException e) {
+                    String badInput = input.nextLine();
+                    System.out.println("Not a number!");
+                    continue;
+                }
+                System.out.println("Choose the maximum: ");
+                System.out.print("> ");
+                try {
+                    max = input.nextInt();
+                } catch (InputMismatchException e) {
+                    String badInput = input.nextLine();
+                    System.out.println("Not a number!");
+                    continue;
+                }
+                break;
+            } else {
+                min = 0;
+                max = 100;
+                break;
+            }
+        }
+        Random rand = new Random();
+        //https://javabeginnerstutorial.com/code-base/generate-random-number-java-between-two-numbers/ method 4
+        int target = rand.ints(min, max).findFirst().getAsInt(); 
+        System.out.println(rand.ints(min, max));
+        
+        // answer provided for debugging :D 
+        System.out.println("Please guess a number between " + min + " and " + max + " (hint: it's " + target +")");
         
         int guess;
-        int best = -1;
+        int best = -1; //set to an int that it couldn't be, for simplicity
         int maxAttempts = 15;
-        // int guess, best;
 
+        // finally, the gameplay loop
         while (true) {
+
             attempts++;
             System.out.print("> ");
-            try {
+            try { 
+                // this is pretty cool: the thing that might fail is assigning 
+                // to a variable declared as int. so that's the thing that's `tried`.
                 guess = input.nextInt();
-            } catch (InputMismatchException e){
-                String badInput = input.next();
+            } catch (InputMismatchException e){ //I got the name of the error by causing it
+                String badInput = input.nextLine(); //skip the input that threw the error
                 System.out.println("Not a number!");
                 continue;
             }
@@ -43,13 +88,14 @@ public class Game {
             if (guess != target & attempts < maxAttempts) {
                 System.out.println("Not quite!");
                 // handle out of bounds
-                if (guess > 100 | guess < 1){
-                    System.out.println(guess + " is not between 1 and 100!");
+                if (guess > max | guess < min){
+                    System.out.println(guess + " is not between " + min + " and " + max + "!");
                 } else if (guess < target) {
                     System.out.println(guess + " is too low!");
                 } else {
                     System.out.println(guess + " is too high!");
                 }
+
             // game is over. process win/loss and start loop over
             } else {
                 if (guess != target & attempts == maxAttempts) {
@@ -65,18 +111,23 @@ public class Game {
                     System.out.println("You succeeded in " + attempts + " guesses.");
                     System.out.println("Your best score is " + best + " guesses.");
                 }
+                // regardless of win/loss, you can play again
                 System.out.println("Would you like to play again? Y / N");
                 System.out.print("> ");
-                again = input.next();
+                again = input.nextLine();
                 while (!again.equals("Y") & !again.equals("N")) {
                     System.out.println("Please type Y or N!");
                     System.out.print("> ");
-                    again = input.next();
+                    again = input.nextLine();
                 }
                 if (again.equals("Y")) {
                     target = rand.nextInt(100);
                     attempts = 0;
-                    System.out.println("Please guess a number between 1 and 100 (hint: it's " + target +")");
+                    // too lazy for fixing this replay option to accept a range
+                    System.out.println("Please guess a number between 0 and 100 (hint: it's " + target +")");
+                    // setting these manually so that the print messages in the loop make sense
+                    min = 0
+                    max = 100
                 } else {
                     System.out.println("Thank you for playing!");
                     break;
