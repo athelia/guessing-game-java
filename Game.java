@@ -26,6 +26,7 @@ public class Game {
         
         int guess;
         int best = -1;
+        int maxAttempts = 15;
         // int guess, best;
 
         while (true) {
@@ -39,8 +40,9 @@ public class Game {
                 continue;
             }
 
-            if (guess != target) {
+            if (guess != target & attempts < maxAttempts) {
                 System.out.println("Not quite!");
+                // handle out of bounds
                 if (guess > 100 | guess < 1){
                     System.out.println(guess + " is not between 1 and 100!");
                 } else if (guess < target) {
@@ -48,20 +50,27 @@ public class Game {
                 } else {
                     System.out.println(guess + " is too high!");
                 }
+            // game is over. process win/loss and start loop over
             } else {
-                if (best == -1) {
-                    best = attempts;
-                } else if (best > attempts) {
-                    best = attempts;
+                if (guess != target & attempts == maxAttempts) {
+                    System.out.println("Too bad, you ran out of guesses! My number was " + target);
+                } else { //in all other cases, we got here because the person won the game
+                    // handle updating best score
+                    if (best == -1) {
+                        best = attempts;
+                    } else if (best > attempts) {
+                        best = attempts;
+                    }
+                    System.out.println("Great job, " + name + "! That was my number.");
+                    System.out.println("You succeeded in " + attempts + " guesses.");
+                    System.out.println("Your best score is " + best + " guesses.");
                 }
-                System.out.println("Great job, " + name + "! That was my number.");
-                System.out.println("You succeeded in " + attempts + " guesses.");
-                System.out.println("Your best score is " + best + " guesses.");
                 System.out.println("Would you like to play again? Y / N");
                 System.out.print("> ");
                 again = input.next();
                 while (!again.equals("Y") & !again.equals("N")) {
                     System.out.println("Please type Y or N!");
+                    System.out.print("> ");
                     again = input.next();
                 }
                 if (again.equals("Y")) {
@@ -75,5 +84,4 @@ public class Game {
             }
         }
     }
-
 }
